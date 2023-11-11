@@ -17,10 +17,14 @@ func Config() {
 		return
 	}
 
+	createTables()
+}
+
+func createTables() {
 	statement, err := db.Prepare(`
 		CREATE TABLE IF NOT EXISTS posts (
-		id INTEGER PRIMARY KEY, 
-		user_id INTEGER, 
+		id TEXT PRIMARY KEY, 
+		user_id TEXT, 
 		title TEXT,
 		content TEXT,
 		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
