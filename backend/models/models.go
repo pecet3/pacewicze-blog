@@ -41,7 +41,7 @@ func GetAllPosts() ([]Post, error) {
 func (p *Post) CreateAPost() (*Post, error) {
 	statement := "INSERT INTO posts (user_id, title, content) VALUES (?,?,?)"
 	fmt.Println(p)
-	_, err := db.Query(statement, 1, "title", "lorem ipsum")
+	_, err := db.Query(statement, 0, "title", "lorem ipsum")
 
 	if err != nil {
 		fmt.Println(err)
