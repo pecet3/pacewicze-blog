@@ -10,7 +10,8 @@ import (
 var db *sql.DB
 
 func Config() {
-	db, err := sql.Open("sqlite3", "./db1.db")
+	var err error
+	db, err = sql.Open("sqlite3", "./db1.db")
 	if err != nil {
 		log.Println(err)
 		return
