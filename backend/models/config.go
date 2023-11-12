@@ -27,6 +27,7 @@ func createTables() {
 		user_id TEXT, 
 		title TEXT,
 		content TEXT,
+		image_url TEXT,
 		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 	)`)
 	if err != nil {
