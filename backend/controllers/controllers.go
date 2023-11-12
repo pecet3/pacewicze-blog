@@ -48,8 +48,8 @@ func PostById(w http.ResponseWriter, r *http.Request) {
 	post, err := models.GetPostById(postId)
 
 	if post == (models.Post{}) {
-		log.Println("error get post by id: ", err)
-		w.WriteHeader(http.StatusInternalServerError)
+		w.WriteHeader(http.StatusNotFound)
+		utils.SendErrorJson(w, ("Not found any record with id: " + postId))
 		return
 	}
 	if err != nil {
