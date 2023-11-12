@@ -11,8 +11,8 @@ type Post struct {
 	UserId    string    `json:"user_id"`
 	Title     string    `json:"title"`
 	Content   string    `json:"content"`
-	CreatedAt time.Time `json:"created_at"`
 	ImageUrl  string    `json:"image_url"`
+	CreatedAt time.Time `json:"created_at"`
 }
 
 func GetAllPosts() ([]Post, error) {
@@ -28,7 +28,7 @@ func GetAllPosts() ([]Post, error) {
 
 	for rows.Next() {
 		var post Post
-		err := rows.Scan(&post.Id, &post.UserId, &post.Title, &post.Content, &post.CreatedAt)
+		err := rows.Scan(&post.Id, &post.UserId, &post.Title, &post.Content, &post.ImageUrl, &post.CreatedAt)
 
 		if err != nil {
 			return nil, err
@@ -51,4 +51,23 @@ func (p *Post) CreateAPost() (*Post, error) {
 
 	log.Printf("user with id: %s has created a new post with id: %s", p.UserId, p.Id)
 	return p, nil
+}
+
+func GetPostById(Id string) (Post, error) {
+	var post Post
+	statement := "SELECT * FROM posts WHERE ID = ?"
+
+	row, err := db.Query(statement, Id)
+	if err != nil {
+		return Post{}, err
+	}
+	for row.Next() {
+		err := row.Scan(&post.Id, &post.UserId, &post.Title, &post.Content, &post.ImageUrl, &post.CreatedAt)
+
+		if err != nil {
+			return Post{}, err
+		}
+	}
+
+	return post, nil
 }
