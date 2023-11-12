@@ -12,7 +12,8 @@ func SetupAndRun() {
 	mux := mux.NewRouter()
 	port := ":5000"
 
-	mux.HandleFunc("/post", controllers.GetAllPosts).Methods("GET")
+	mux.HandleFunc("/api/post", controllers.Post).Methods("GET", "POST")
+	mux.HandleFunc("/api/post/{id}", controllers.PostById).Methods("GET")
 	log.Println("Starting the server at port", port)
 	log.Fatal(http.ListenAndServe(port, mux))
 }
