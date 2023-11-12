@@ -8,6 +8,10 @@ import (
 	"net/http"
 )
 
+type ErrorResponse struct {
+	Error string `json:"error_message"`
+}
+
 func GetRandomString(length int) string {
 	charset := "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 
@@ -26,4 +30,17 @@ func ParseJsonBody(r *http.Request, b interface{}) {
 		log.Println("error parse json: ", err)
 	}
 	return
+}
+
+func SendErrorJson(w http.ResponseWriter, message string) error {
+	errorMessage := ErrorResponse{Error: message}
+
+	res, err := json.Marshal(errorMessage)
+
+	if err != nil {
+		return err
+	}
+	w.Header().Set("Content-Type", "application/json")
+	w.Write(res)
+	return nil
 }
