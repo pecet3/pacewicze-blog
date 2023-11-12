@@ -2,7 +2,7 @@ package models
 
 import (
 	"backend/utils"
-	"fmt"
+	"log"
 	"time"
 )
 
@@ -12,6 +12,7 @@ type Post struct {
 	Title     string    `json:"title"`
 	Content   string    `json:"content"`
 	CreatedAt time.Time `json:"created_at"`
+	ImageUrl  string    `json:"image_url"`
 }
 
 func GetAllPosts() ([]Post, error) {
@@ -32,7 +33,6 @@ func GetAllPosts() ([]Post, error) {
 		if err != nil {
 			return nil, err
 		}
-		fmt.Println(post)
 		posts = append(posts, post)
 	}
 
@@ -40,14 +40,15 @@ func GetAllPosts() ([]Post, error) {
 }
 
 func (p *Post) CreateAPost() (*Post, error) {
-	statement := "INSERT INTO posts (id, user_id, title, content) VALUES (?,?,?,?)"
+	statement := "INSERT INTO posts (id, user_id, title, content, image_url) VALUES (?,?,?,?,?)"
 
 	p.Id = utils.GetRandomString(32)
 
-	_, err := db.Exec(statement, p.Id, p.UserId, p.Title, p.Content)
+	_, err := db.Exec(statement, p.Id, p.UserId, p.Title, p.Content, p.ImageUrl)
 	if err != nil {
 		return nil, err
 	}
 
+	log.Printf("user with id: %s has created a new post with id: %s", p.UserId, p.Id)
 	return p, nil
 }
