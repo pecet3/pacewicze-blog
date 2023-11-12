@@ -22,9 +22,28 @@ func Config() {
 
 func createTables() {
 	statement, err := db.Prepare(`
+		CREATE TABLE IF NOT EXISTS users (
+			id TEXT PRIMARY KEY,
+			name TEXT,
+			email TEXT,
+			password TEXT,
+			image_url TEXT,
+			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+	)`)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if _, err := statement.Exec(); err != nil {
+		log.Println(err)
+		return
+	}
+
+	statement, err = db.Prepare(`
 		CREATE TABLE IF NOT EXISTS posts (
 		id TEXT PRIMARY KEY, 
-		user_id TEXT, 
+		user_id TEXT,
+		FOREGIN KEY (user_id) REFERENCES users(id)
 		title TEXT,
 		content TEXT,
 		image_url TEXT,
@@ -34,5 +53,8 @@ func createTables() {
 		log.Println(err)
 		return
 	}
-	statement.Exec()
+	if _, err := statement.Exec(); err != nil {
+		log.Println(err)
+		return
+	}
 }
