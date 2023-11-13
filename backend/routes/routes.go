@@ -13,7 +13,7 @@ func SetupAndRun() {
 	port := ":5000"
 
 	mux.HandleFunc("/api/post", controllers.Post).Methods("GET", "POST")
-	mux.HandleFunc("/api/post/{id}", controllers.PostById).Methods("GET")
+	mux.HandleFunc("/api/post/{id}", controllers.PostById).Methods("GET", "PUT")
 	log.Println("Starting the server at port", port)
 	log.Fatal(http.ListenAndServe(port, mux))
 }
