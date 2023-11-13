@@ -1,6 +1,8 @@
 package utils
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"io"
 	"log"
@@ -43,4 +45,16 @@ func SendErrorJson(w http.ResponseWriter, message string) error {
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(res)
 	return nil
+}
+
+func hashPassword(password string) (string, error) {
+	hasher := sha256.New()
+
+	hasher.Write([]byte(password))
+
+	hashInBytes := hasher.Sum(nil)
+
+	hashString := hex.EncodeToString(hashInBytes)
+
+	return hashString, nil
 }
