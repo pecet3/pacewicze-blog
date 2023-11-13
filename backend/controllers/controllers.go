@@ -39,35 +39,69 @@ func Post(w http.ResponseWriter, r *http.Request) {
 		}
 		w.WriteHeader(http.StatusOK)
 	}
+
 }
 
 func PostById(w http.ResponseWriter, r *http.Request) {
+	method := r.Method
 	vars := mux.Vars(r)
 	postId := vars["id"]
 
-	post, err := models.GetPostById(postId)
+	if method == "GET" {
+		post, err := models.GetPostById(postId)
 
-	if post == (models.Post{}) {
-		w.WriteHeader(http.StatusNotFound)
-		utils.SendErrorJson(w, ("Not found any record with id: " + postId))
-		return
+		if post == (models.Post{}) {
+			w.WriteHeader(http.StatusNotFound)
+			utils.SendErrorJson(w, ("Not found any record with id: " + postId))
+			return
+		}
+		if err != nil {
+			log.Println("error get post by id: ", err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		res, err := json.Marshal(post)
+
+		if err != nil {
+			log.Println("error parsing json: ", err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		w.Write(res)
 	}
-	if err != nil {
-		log.Println("error get post by id: ", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
+
+	if method == "PUT" {
+		vars := mux.Vars(r)
+		id := vars["id"]
+		postRequest := &models.Post{}
+		utils.ParseJsonBody(r, postRequest)
+
+		post, err := models.GetPostById(id)
+		if err != nil {
+			log.Println("error update post: ", err)
+		}
+
+		if postRequest.Title != "" {
+			post.Title = postRequest.UserId
+		}
+
+		if postRequest.Content != "" {
+			post.Content = postRequest.Content
+		}
+		if postRequest.ImageUrl != "" {
+			post.ImageUrl = postRequest.ImageUrl
+		}
+
+		_, err = post.EditAPost()
+		if err != nil {
+			log.Println("error update post: ", err)
+		}
+
+		w.WriteHeader(http.StatusOK)
 	}
-
-	res, err := json.Marshal(post)
-
-	if err != nil {
-		log.Println("error parsing json: ", err)
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	w.Write(res)
 
 }
