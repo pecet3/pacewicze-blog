@@ -61,7 +61,7 @@ func (p *Post) EditAPost() (*Post, error) {
 		return nil, err
 	}
 
-	log.Printf("user with id: %s has created a new post with id: %s", p.UserId, p.Id)
+	log.Printf("user with id: %s has edited post with id: %s", p.UserId, p.Id)
 	return p, nil
 }
 
