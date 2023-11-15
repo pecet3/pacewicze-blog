@@ -53,11 +53,24 @@ func (p *Post) CreateAPost() (*Post, error) {
 	return p, nil
 }
 
-func GetPostById(Id string) (Post, error) {
-	var post Post
-	statement := "SELECT * FROM posts WHERE ID = ?"
+func (p *Post) EditAPost() (*Post, error) {
+	statement := "UPDATE posts SET title = ?, content = ?, image_url = ?"
 
-	row, err := db.Query(statement, Id)
+	_, err := db.Exec(statement, p.Title, p.Content, p.ImageUrl)
+	if err != nil {
+		return nil, err
+	}
+
+	log.Printf("user with id: %s has edited post with id: %s", p.UserId, p.Id)
+	return p, nil
+}
+
+func GetPostById(id string) (Post, error) {
+	var post Post
+	statement := "SELECT * FROM posts WHERE id = ?"
+
+	row, err := db.Query(statement, id)
+	defer row.Close()
 	if err != nil {
 		return Post{}, err
 	}
