@@ -109,12 +109,21 @@ func PostById(w http.ResponseWriter, r *http.Request) {
 func Register(w http.ResponseWriter, r *http.Request) {
 	user := &models.User{}
 	utils.ParseJsonBody(r, user)
+
 	if user.Name == "" && user.Password == "" && user.Email == "" {
 		utils.SendErrorJson(w, "incorrect request data")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
-	user, err := user.CreateAnUser()
+	userDb, err := models.GetUserByEmail(user.Email)
+
+	if userDb != (models.User{}) {
+		utils.SendErrorJson(w, "there is an user with this email")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	user, err = user.CreateAnUser()
 	if err != nil {
 		utils.SendErrorJson(w, "cannot create a new user")
 		w.WriteHeader(http.StatusInternalServerError)
@@ -123,7 +132,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	res, err := json.Marshal(user)
 	if err != nil {
 		utils.SendErrorJson(w, "error during parse json, but user has been added")
-		w.WriteHeader(http.StatusInternalServerError)
+		w.WriteHeader(http.StatusOK)
 		return
 	}
 
@@ -136,16 +145,23 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	user := &models.User{}
 	utils.ParseJsonBody(r, user)
 
+	if user.Name == "" && user.Password == "" && user.Email == "" {
+		utils.SendErrorJson(w, "incorrect request data")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
 	userDb, err := models.GetUserByEmail(user.Email)
+
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
-		utils.SendErrorJson(w, "error with server")
+		utils.SendErrorJson(w, "error with server or db")
 		return
 	}
 
 	if userDb == (models.User{}) {
 		w.WriteHeader(http.StatusUnauthorized)
-		utils.SendErrorJson(w, ("There is not any user with this email"))
+		utils.SendErrorJson(w, ("there is not any user with this email"))
 		return
 	}
 
