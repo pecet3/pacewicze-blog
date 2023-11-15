@@ -3,7 +3,6 @@ package utils
 import (
 	"crypto/sha256"
 	"encoding/hex"
-	"errors"
 	"math/rand"
 )
 
@@ -50,5 +49,5 @@ func VerifyPassword(password, salt string) (bool, error) {
 		return true, nil
 	}
 
-	return false, errors.New("Passwords are not the same")
+	return false, nil
 }
