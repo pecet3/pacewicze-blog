@@ -125,7 +125,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 
 	user, err = user.CreateAnUser()
 	if err != nil {
-		utils.SendErrorJson(w, "cannot create a new user")
+		utils.SendErrorJson(w, "error with server or db")
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
