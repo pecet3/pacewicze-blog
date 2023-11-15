@@ -105,3 +105,64 @@ func PostById(w http.ResponseWriter, r *http.Request) {
 	}
 
 }
+
+func Register(w http.ResponseWriter, r *http.Request) {
+	user := &models.User{}
+	utils.ParseJsonBody(r, user)
+	if user.Name == "" && user.Password == "" && user.Email == "" {
+		utils.SendErrorJson(w, "incorrect request data")
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+	user, err := user.CreateAnUser()
+	if err != nil {
+		utils.SendErrorJson(w, "cannot create a new user")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	res, err := json.Marshal(user)
+	if err != nil {
+		utils.SendErrorJson(w, "error during parse json, but user has been added")
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(res)
+}
+
+func Login(w http.ResponseWriter, r *http.Request) {
+	user := &models.User{}
+	utils.ParseJsonBody(r, user)
+
+	userDb, err := models.GetUserByEmail(user.Email)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		utils.SendErrorJson(w, "error with server")
+		return
+	}
+
+	if userDb == (models.User{}) {
+		w.WriteHeader(http.StatusUnauthorized)
+		utils.SendErrorJson(w, ("There is not any user with this email"))
+		return
+	}
+
+	isPasswordCorrect, err := utils.VerifyPassword(user.Password, userDb.Salt)
+
+	if err != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		utils.SendErrorJson(w, ("incorrect password"))
+		return
+	}
+
+	if isPasswordCorrect == true {
+		res, _ := json.Marshal(user)
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		w.Write(res)
+	}
+
+	return
+}
