@@ -13,14 +13,19 @@ func Config() {
 	var err error
 	db, err = sql.Open("sqlite3", "./db1.db")
 	if err != nil {
-		log.Println(err)
+		log.Println("config error:", err)
 		return
 	}
 
-	createTables()
+	err = createTables()
+	if err != nil {
+		log.Println("config error:", err)
+		return
+	}
+
 }
 
-func createTables() {
+func createTables() error {
 	statement, err := db.Prepare(`
 		CREATE TABLE IF NOT EXISTS users (
 			id TEXT PRIMARY KEY,
@@ -33,12 +38,10 @@ func createTables() {
 	)`)
 
 	if err != nil {
-		log.Println(err, "1")
-		return
+		return err
 	}
 	if _, err := statement.Exec(); err != nil {
-		log.Println(err, "2")
-		return
+		return err
 	}
 
 	statement, err = db.Prepare(`
@@ -53,11 +56,13 @@ func createTables() {
 			FOREIGN KEY (user_id) REFERENCES users(id)
 	)`)
 	if err != nil {
-		log.Println(err, "3")
-		return
+
+		return err
 	}
 	if _, err := statement.Exec(); err != nil {
-		log.Println(err, "4")
-		return
+
+		return err
 	}
+
+	return nil
 }
