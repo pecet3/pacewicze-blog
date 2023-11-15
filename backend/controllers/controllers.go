@@ -118,7 +118,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	userDb, err := models.GetUserByEmail(user.Email)
 
 	if userDb != (models.User{}) {
-		utils.SendErrorJson(w, "there is an user with this email")
+		utils.SendErrorJson(w, ("there is an user with email: " + user.Email))
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
@@ -161,7 +161,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	if userDb == (models.User{}) {
 		w.WriteHeader(http.StatusUnauthorized)
-		utils.SendErrorJson(w, ("there is not any user with this email"))
+		utils.SendErrorJson(w, ("there is not any user with email: " + user.Email))
 		return
 	}
 
