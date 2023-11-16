@@ -4,6 +4,7 @@ import (
 	"backend/models"
 	"backend/utils"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -145,7 +146,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	user := &models.User{}
 	utils.ParseJsonBody(r, user)
 
-	if user.Name == "" && user.Password == "" && user.Email == "" {
+	if user.Password == "" && user.Email == "" {
 		utils.SendErrorJson(w, "incorrect request data")
 		w.WriteHeader(http.StatusBadRequest)
 		return
@@ -174,7 +175,9 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if isPasswordCorrect == true {
-		res, _ := json.Marshal(user)
+		token, _ := utils.CreateJWT()
+		fmt.Println(token)
+		res, _ := json.Marshal(token)
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 		w.Write(res)
