@@ -31,7 +31,7 @@ func ValidateJWT(next http.HandlerFunc) http.HandlerFunc {
 
 		if tokenHeader == "" {
 			w.WriteHeader(http.StatusUnauthorized)
-			w.Write([]byte("brak autoryzacji"))
+			SendErrorJson(w, "no token header")
 			return
 		}
 
@@ -39,15 +39,15 @@ func ValidateJWT(next http.HandlerFunc) http.HandlerFunc {
 			_, ok := t.Method.(*jwt.SigningMethodHMAC)
 			if !ok {
 				w.WriteHeader(http.StatusUnauthorized)
-				w.Write([]byte("brak autoryzacji"))
-				return nil, fmt.Errorf("brak autoryzacji")
+				SendErrorJson(w, "error signing token")
+				return nil, fmt.Errorf("error signing token")
 			}
 			return secret, nil
 		})
-		fmt.Println(token)
+
 		if err != nil {
 			w.WriteHeader(http.StatusUnauthorized)
-			w.Write([]byte("brak autoryzacji: " + err.Error()))
+			SendErrorJson(w, "token error")
 			return
 		}
 
@@ -55,7 +55,7 @@ func ValidateJWT(next http.HandlerFunc) http.HandlerFunc {
 			next(w, r)
 		} else {
 			w.WriteHeader(http.StatusUnauthorized)
-			w.Write([]byte("brak autoryzacji"))
+			SendErrorJson(w, "invalid authorization")
 		}
 	}
 }
