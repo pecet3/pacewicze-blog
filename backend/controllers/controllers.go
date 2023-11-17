@@ -111,11 +111,12 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	user := &models.User{}
 	utils.ParseJsonBody(r, user)
 
-	if user.Name == "" && user.Password == "" && user.Email == "" {
-		utils.SendErrorJson(w, "incorrect request data")
+	if len(user.Password) < 5 || len(user.Password) < 5 || len(user.Email) < 5 {
+		utils.SendErrorJson(w, "incorrect data")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
+
 	userDb, err := models.GetUserByEmail(user.Email)
 
 	if userDb != (models.User{}) {
@@ -146,8 +147,8 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	user := &models.User{}
 	utils.ParseJsonBody(r, user)
 
-	if user.Password == "" && user.Email == "" {
-		utils.SendErrorJson(w, "incorrect request data")
+	if len(user.Password) < 5 || len(user.Email) < 5 {
+		utils.SendErrorJson(w, "incorrect data")
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
