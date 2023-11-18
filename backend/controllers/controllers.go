@@ -32,6 +32,13 @@ func Post(w http.ResponseWriter, r *http.Request) {
 	if method == "POST" {
 		post := &models.Post{}
 		utils.ParseJsonBody(r, post)
+
+		if post.Content == "" || post.UserId == "" || post.Title == "" {
+			utils.SendErrorJson(w, "incorrect data")
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+
 		post, err := post.CreateAPost()
 		if err != nil {
 			log.Println("error create post: ", err)
