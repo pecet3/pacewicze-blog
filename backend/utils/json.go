@@ -11,13 +11,14 @@ type ErrorResponse struct {
 	Error string `json:"error_message"`
 }
 
-func ParseJsonBody(r *http.Request, b interface{}) {
+func ParseJsonBody(r *http.Request, b interface{}) error {
 	body, err := io.ReadAll(r.Body)
 	err = json.Unmarshal([]byte(body), b)
 	if err != nil {
 		log.Println("error parse json: ", err)
+		return err
 	}
-	return
+	return nil
 }
 
 func SendErrorJson(w http.ResponseWriter, message string) error {
