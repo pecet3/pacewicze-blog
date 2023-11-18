@@ -11,7 +11,7 @@ import (
 
 func SetupAndRun() {
 	mux := mux.NewRouter()
-	port := ":3011"
+	port := ":30111"
 
 	mux.HandleFunc("/api/post", controllers.Post).Methods("GET")
 	mux.HandleFunc("/api/post", utils.ValidateJWT(controllers.Post)).Methods("POST")
