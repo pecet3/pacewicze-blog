@@ -34,6 +34,7 @@ func createTables() error {
 			password TEXT,
 			image_url TEXT,
 			salt TEXT,
+			is_active BOOLEAN DEFAULT 0,
 			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 	)`)
 
@@ -52,7 +53,6 @@ func createTables() error {
 			content TEXT,
 			image_url TEXT,
 			created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-			is_active BOOLEAN DEFAULT 0,
 			FOREIGN KEY (user_id) REFERENCES users(id)
 	)`)
 	if err != nil {
