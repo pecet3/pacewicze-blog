@@ -10,6 +10,8 @@ import (
 
 var secret = []byte("humbak")
 
+
+
 func CreateJWT() (string, error) {
 	token := jwt.New(jwt.SigningMethodHS256)
 	claims := token.Claims.(jwt.MapClaims)
