@@ -14,6 +14,7 @@ type User struct {
 	Salt      string    `json:"salt"`
 	ImageUrl  string    `json:"image_url"`
 	CreatedAt time.Time `json:"created_at"`
+	IsActive  bool      `json:"is_active"`
 }
 
 func (u *User) CreateAnUser() (*User, error) {
@@ -34,10 +35,6 @@ func (u *User) CreateAnUser() (*User, error) {
 
 	_, err = db.Exec(statement, u.Id, u.Name, u.Email, u.Password, u.Salt, u.ImageUrl)
 	if err != nil {
-		log.Println(err)
-	}
-	if err != nil {
-		log.Println(err, 2)
 		return nil, err
 	}
 
@@ -47,7 +44,7 @@ func (u *User) CreateAnUser() (*User, error) {
 
 func GetAllUsers() ([]User, error) {
 	var users []User
-	statement := "SELECT id, name, email, image_url, created_at FROM users"
+	statement := "SELECT id, name, email, image_url, created_at, is_active FROM users"
 
 	rows, err := db.Query(statement)
 	defer rows.Close()
@@ -59,7 +56,7 @@ func GetAllUsers() ([]User, error) {
 	for rows.Next() {
 		var user User
 
-		err := rows.Scan(&user.Id, &user.Name, &user.Email, &user.ImageUrl, &user.CreatedAt)
+		err := rows.Scan(&user.Id, &user.Name, &user.Email, &user.ImageUrl, &user.CreatedAt, &user.IsActive)
 
 		if err != nil {
 			return nil, err
@@ -82,7 +79,7 @@ func GetUserById(id string) (User, error) {
 	}
 
 	for row.Next() {
-		err := row.Scan(&user.Id, &user.Name, &user.Email, &user.Password, &user.ImageUrl, &user.Salt, &user.CreatedAt)
+		err := row.Scan(&user.Id, &user.Name, &user.Email, &user.Password, &user.ImageUrl, &user.Salt, &user.CreatedAt, &user.IsActive)
 
 		if err != nil {
 			return User{}, err
@@ -104,7 +101,7 @@ func GetUserByEmail(email string) (User, error) {
 	}
 
 	for row.Next() {
-		err := row.Scan(&user.Id, &user.Name, &user.Email, &user.Password, &user.ImageUrl, &user.Salt, &user.CreatedAt)
+		err := row.Scan(&user.Id, &user.Name, &user.Email, &user.Password, &user.ImageUrl, &user.Salt, &user.CreatedAt, &user.IsActive)
 
 		if err != nil {
 			log.Println(err)
