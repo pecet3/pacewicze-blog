@@ -16,6 +16,18 @@ func Post(w http.ResponseWriter, r *http.Request) {
 
 	if method == "GET" {
 		posts, err := models.GetAllPosts()
+
+		if err != nil {
+			log.Println("error get all posts: ", err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
+
+		if posts == nil {
+			log.Println("error get all posts: ", err)
+			w.WriteHeader(http.StatusInternalServerError)
+			return
+		}
 		res, err := json.Marshal(posts)
 
 		if err != nil {
