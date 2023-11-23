@@ -3,9 +3,9 @@ import './App.css'
 function App() {
   
   return (
-    <>
-      <div>Hello World!</div>
-    </>
+    <div>
+      <div  className="text-5xl font-bold underline text-red-500 ">Hello World!</div>
+    </div>
   )
 }
 
